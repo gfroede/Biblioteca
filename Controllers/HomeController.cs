@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Biblioteca.Models;
 using Microsoft.AspNetCore.Http;
+using Biblioteca.Models;
 
 namespace Biblioteca.Controllers
 {
@@ -21,6 +17,7 @@ namespace Biblioteca.Controllers
 
         public IActionResult Index()
         {
+            Console.WriteLine("Teste");
             Autenticacao.CheckLogin(this);
             return View();
         }
@@ -33,15 +30,17 @@ namespace Biblioteca.Controllers
         [HttpPost]
         public IActionResult Login(string login, string senha)
         {
-            if(login != "admin" || senha != "123")
+            if (login == "admin" || senha == "123")
             {
-                ViewData["Erro"] = "Senha inválida";
-                return View();
+                HttpContext.Session.SetString("user", "admin");
+                HttpContext.Session.SetString("Login", "true");
+                HttpContext.Session.SetInt32("tipo", 0);
+                return RedirectToAction("Index");
             }
             else
             {
-                HttpContext.Session.SetString("user", "admin");
-                return RedirectToAction("Index");
+                ViewData["Erro"] = "Senha inválida";
+                return View();
             }
         }
 
